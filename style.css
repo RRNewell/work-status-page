@@ -167,3 +167,36 @@ footer {
         transform: translateX(50%) scaleY(1)
     }
 }
+
+        .offline {
+            color: #a51d1d; /* Text turns red when offline */
+            position: relative;
+        }
+
+        .moon {
+            position: relative;
+            top: 3px; /* Adjust the position of the moon icon */
+        }
+
+        .floating-z {
+            position: absolute;
+            top: 0;
+            right: -10px;
+            animation: floatZ 2s infinite;
+        }
+
+        @keyframes floatZ {
+            0% {
+                top: 0;
+                opacity: 1;
+            }
+            50% {
+                top: -10px;
+                opacity: 0.7;
+            }
+            100% {
+                top: -20px;
+                opacity: 0;
+            }
+        }
+

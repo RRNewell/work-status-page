@@ -10,7 +10,7 @@
     
     <!-- Link to external CSS file -->
     <link rel="stylesheet" href="style.css">
-    
+
 </head>
 <body>
 <header>
@@ -53,7 +53,7 @@
 <input type="hidden" id="workLocation" value="home">
 <input type="hidden" id="currentLocation" value="Switzerland">
 <input type="hidden" id="availabilityStatus" value="8 AM - 5 PM">
-<input type="hidden" id="lastUpdated" value="2024-09-11T13:15:00Z"> <!-- Example of last updated in UTC -->
+<input type="hidden" id="lastUpdated" value="2024-09-11T21:05:00Z"> <!-- Example of last updated in UTC -->
 <input type="hidden" id="timezoneCode" value="Switzerland"> <!-- This will control the timezone -->
 
 <script>
@@ -75,8 +75,36 @@
         }
     };
 
+    async function fetchUKTimezone() {
+        const ukTimezoneUrl = `https://worldtimeapi.org/api/timezone/Europe/London`;
+        console.log("Fetching UK timezone for availability section...");
+
+        try {
+            const response = await fetch(ukTimezoneUrl);
+            if (response.ok) {
+                const data = await response.json();
+
+                // Log UK timezone data
+                console.log("UK Timezone data:", data);
+
+                // Extract whether it's GMT or BST
+                const abbreviation = data.abbreviation;  // Should return GMT or BST
+
+                // Display availability with GMT or BST
+                updateAvailability(abbreviation);
+
+            } else {
+                throw new Error('Failed to fetch UK timezone data: ' + response.status);
+            }
+        } catch (error) {
+            console.error("Error during UK timezone fetch:", error);
+            document.getElementById('availability').textContent = "Error loading availability"; // Handle failure gracefully
+        }
+    }
+
     async function fetchTimezoneInfo(countryCode) {
         const timezoneData = timezoneMapping[countryCode] || { apiTimezone: "UTC", flag: "" };
+        console.log(`Fetching timezone info for: ${countryCode}`);
 
         try {
             // Use HTTPS to request the API
@@ -84,96 +112,134 @@
             if (response.ok) {
                 const data = await response.json();
 
-                // Log full timezone data
+                // Log full timezone data for debugging
                 console.log(`Timezone data for ${countryCode}:`, data);
 
-                // Get the UTC time and local time from the API
-                const utcDateTime = new Date(data.utc_datetime);
-                const localDateTime = new Date(data.datetime);
+                // Directly use the datetime string from the API without converting to a JavaScript Date object
+                const datetimeString = data.datetime;
 
-                // Check if DST is active
-                isDSTActive = data.dst;
+                // Extract the time portion (HH:mm:ss) from the datetime string
+                const time = datetimeString.split('T')[1].split('.')[0]; // Get the '21:22:16' part
+                console.log(`${countryCode} Time: ${time}`);
 
-                // Set the local time offset
-                localTimeOffset = localDateTime.getTime() - utcDateTime.getTime();
-
-                // Set the initial local time and log it
-                const adjustedTime = new Date(localDateTime.getTime()).toLocaleTimeString();
-                document.getElementById('localTime').textContent = adjustedTime;
-                console.log(`${countryCode} Time: ${adjustedTime}`);
+                // Display the extracted time in the UI
+                document.getElementById('localTime').textContent = time;
 
                 // Update the timezone flag
                 document.getElementById('timezoneFlag').src = timezoneData.flag;
 
-                // Set the abbreviation for the timezone
+                // Display the timezone abbreviation (e.g., GMT, BST, CET, CEST)
                 const abbreviation = data.abbreviation;
                 document.getElementById('timezoneAbbreviation').textContent = `(${abbreviation})`;
 
             } else {
-                throw new Error('Too many requests or another issue.');
+                throw new Error('Failed to fetch timezone data: ' + response.status);
             }
 
         } catch (error) {
-            console.error("Failed to fetch timezone data: ", error);
+            console.error("Error during fetch:", error);
             document.getElementById('localTime').textContent = "Error fetching time";
             document.getElementById('timezoneFlag').src = ""; // Reset flag in case of error
         }
     }
 
-    function incrementLocalTime() {
-        // Increment the local time every second based on the offset from UTC
-        const now = new Date();
-        const adjustedLocalTime = new Date(now.getTime() + localTimeOffset);
-        document.getElementById('localTime').textContent = adjustedLocalTime.toLocaleTimeString();
+    function parseAvailabilityHours(availabilityString) {
+        // Example input: "8 AM - 5 PM"
+        const [startTime, endTime] = availabilityString.split(' - ').map(time => convertTo24Hour(time));
+        return { start: startTime, end: endTime };
+    }
+
+    function convertTo24Hour(timeStr) {
+        const [time, modifier] = timeStr.split(' ');
+        let [hours, minutes] = time.split(':');
+
+        if (!minutes) minutes = '00'; // Ensure minutes are always available
+
+        if (hours === "12") {
+            hours = "00";
+        }
+
+        if (modifier === "PM") {
+            hours = parseInt(hours, 10) + 12;
+        }
+
+        return parseInt(hours, 10);
     }
 
     function updateStatus() {
         const workLocation = document.getElementById('workLocation').value;
         const availability = document.getElementById('availabilityStatus').value;
-        const lastUpdated = document.getElementById('lastUpdated').value;
         const locationElement = document.getElementById('location');
-        const availabilityElement = document.getElementById('availability');
-        const statusCircle = document.getElementById('status-circle');
         const timezoneCode = document.getElementById('timezoneCode').value;
 
-        // Fetch current time and flag based on the selected country (e.g., UK, Germany, Switzerland)
+        console.log("Updating status for timezone:", timezoneCode);
+
+        // Parse the availability hours from the hidden field
+        const { start, end } = parseAvailabilityHours(availability);
+
+        // Fetch current timezone info based on the user's current location
         fetchTimezoneInfo(timezoneCode);
 
-        // Handle work location logic
-        if (timezoneCode === "Germany" || timezoneCode === "Switzerland") {
-            locationElement.innerHTML = `Working abroad <i class="fas fa-plane"></i>`;
-        } else {
-            if (workLocation === 'home') {
-                locationElement.innerHTML = `Working from home <i class="fas fa-home"></i>`;
-            } else if (workLocation === 'work') {
-                locationElement.innerHTML = `In Office <i class="fas fa-building"></i>`;
+        // Fetch UK timezone info for availability display
+        fetchUKTimezone();
+
+        // Get the current UTC time and convert it to hours in 24-hour format
+        const now = new Date();
+        const currentHour = now.getUTCHours() + (isDSTActive ? 1 : 0); // Adjust for DST if active
+        console.log(`Current UTC Hour: ${now.getUTCHours()}, Adjusted Hour: ${currentHour}`);
+
+        // Handle work location logic based on availability hours
+        if (currentHour >= start && currentHour < end) {
+            if (timezoneCode === "Germany" || timezoneCode === "Switzerland") {
+                locationElement.innerHTML = `Working abroad <i class="fas fa-plane"></i>`;
+            } else {
+                if (workLocation === 'home') {
+                    locationElement.innerHTML = `Working from home <i class="fas fa-home"></i>`;
+                } else if (workLocation === 'work') {
+                    locationElement.innerHTML = `Working in office <i class="fas fa-building"></i>`;
+                }
             }
+        } else {
+            // Set the status to offline with red text, moon, and floating Z's
+            locationElement.innerHTML = `Offline <i class="fas fa-moon moon"></i><span class="floating-z">Z</span><span class="floating-z" style="right: -30px;">Z</span><span class="floating-z" style="right: -50px;">Z</span>`;
+            locationElement.classList.add("offline");
         }
 
-        availabilityElement.textContent = availability;
-        updateLastUpdatedStatus(lastUpdated, statusCircle);
+        // Update the status circle based on the last updated time
+        const lastUpdated = document.getElementById('lastUpdated').value;
+        updateLastUpdatedStatus(lastUpdated);
     }
 
-    function updateLastUpdatedStatus(lastUpdated, statusCircle) {
+    function updateAvailability(abbreviation) {
+        const availabilityElement = document.getElementById('availability');
+        const availability = document.getElementById('availabilityStatus').value;
+
+        // Append the UK timezone abbreviation (BST/GMT) to the availability hours
+        console.log("Updating availability with abbreviation:", abbreviation);
+        availabilityElement.textContent = `Available from ${availability} (${abbreviation})`;
+    }
+
+    function updateLastUpdatedStatus(lastUpdated) {
+        const statusCircle = document.getElementById('status-circle');
         const lastUpdatedDate = new Date(lastUpdated);
         const currentDate = new Date();
         const diffHours = Math.abs(currentDate - lastUpdatedDate) / 36e5;
 
         let backgroundColor;
         if (diffHours <= 2) {
-            backgroundColor = '#32CD32';
+            backgroundColor = '#32CD32'; // Green for recently updated (0-2 hours)
         } else if (diffHours > 2 && diffHours <= 4) {
-            backgroundColor = '#9ACD32';
+            backgroundColor = '#9ACD32'; // Yellow-green (2-4 hours)
         } else if (diffHours > 4 && diffHours <= 5) {
-            backgroundColor = '#FFD700';
+            backgroundColor = '#FFD700'; // Yellow (4-5 hours)
         } else if (diffHours > 5 && diffHours <= 6) {
-            backgroundColor = '#FFA500';
+            backgroundColor = '#FFA500'; // Orange (5-6 hours)
         } else if (diffHours > 6 && diffHours <= 7) {
-            backgroundColor = '#FF8C00';
+            backgroundColor = '#FF8C00'; // Dark Orange (6-7 hours)
         } else if (diffHours > 7 && diffHours <= 8) {
-            backgroundColor = '#FF4500';
+            backgroundColor = '#FF4500'; // Red-orange (7-8 hours)
         } else {
-            backgroundColor = '#FF0000';
+            backgroundColor = '#FF0000'; // Red for overdue updates (over 8 hours)
         }
 
         statusCircle.style.backgroundColor = backgroundColor;
@@ -183,15 +249,12 @@
     // Fetch the timezone info and set up time incrementing
     updateStatus();
 
-    // Increment local time every second
-    setInterval(incrementLocalTime, 1000);
-
     // Update UTC time every second
     setInterval(() => {
         const now = new Date();
         document.getElementById('utc-time').textContent = now.toUTCString().slice(17, 25);
     }, 1000);
-
 </script>
+
 </body>
 </html>
