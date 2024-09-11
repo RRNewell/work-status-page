@@ -12,33 +12,39 @@
     <link rel="stylesheet" href="style.css">
     
 </head>
+
 <body>
 
 <header>
     <img src="resources/images/birdy.png" alt="Profile Picture" class="profile-pic">
-    <h1>ACG - Work Status: Ryan Newell</h1>
+    <h1>ACG - Ryan Newell</h1>
+    <!-- Email Icon -->
+    <a href="mailto:RyanNewell@acg.co.uk" class="email-icon">
+        <i class="fas fa-envelope"></i>
+    </a>
 </header>
 
-<section>
-    <h2>Work Location</h2>
-    <p>Currently: <span class="status" id="location">Loading...</span></p>
+<main>
+    <section>
+        <h2>Work Location</h2>
+        <p>Currently: <span class="status" id="location">Loading...</span></p>
 
-    <h2>Availability</h2>
-    <p>Available from: <span class="status" id="availability">Loading...</span></p>
+        <h2>Availability</h2>
+        <p>Available from <span class="status" id="availability">Loading...</span></p>
 
-    <h2>Additional Notes</h2>
-    <p id="notes">Feel free to reach out via Teams or email if you need anything!</p>
-</section>
+        <h2>Additional Notes</h2>
+        <p id="notes">Feel free to reach out via Teams or email if you need anything!</p>
+    </section>
+</main>
+
+<div class="wrap">
+  <div class="bgWave waveOne"></div>
+  <div class="bgWave waveTwo"></div>
+</div> <!-- Wave wraps just before the footer -->
 
 <footer>
-	<div style="text-align:center">
-		<!-- Current Status -->
-		<p>Current Status: <span class="status-circle" id="status-circle" title="Status Loading..."></span></p>
-
-		<!-- Option 1: UTC Time Below the Status -->
-		<p style="font-size:small; font">Current UTC Time: <span id="utc-time"></span></p>
-	<div>
-
+    <p>Current Status: <span class="status-circle" id="status-circle" title="Status Loading..."></span></p>
+    <p>Current UTC Time: <span id="utc-time"></span></p>
 </footer>
 
 <!-- Hidden Fields -->
@@ -116,7 +122,6 @@
 
         // Update the UTC time in both locations
         document.getElementById('utc-time').textContent = utcTime;
-        document.getElementById('utc-time-right').textContent = utcTime;
     }
 
     // Initial call to update the status and UTC time

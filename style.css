@@ -1,10 +1,27 @@
-body {
-    font-family: Tahoma, sans-serif;
-    background-color: #585857; /* Slate background */
-    color: #FFFFFF; /* White text for readability */
+html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
+    font-family: Tahoma, sans-serif;
+    background-image: -webkit-linear-gradient(left, #595959 0%, #ff9472 100%);
+    background-image: linear-gradient(to right, #656565 0%, #353535 100%);
+    width: 100%;
+    color: #FFFFFF;
 }
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures the body covers the entire viewport height */
+    position: relative;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+main {
+    flex: 1; /* This makes the main content expand to fill the remaining space */
+    padding: 20px;
+}
+
 header {
     background-color: #F28C00; /* Orange header */
     padding: 20px;
@@ -14,7 +31,9 @@ header {
 header h1 {
     color: #FFFFFF;
     margin: 0;
+    display: inline-block;
 }
+
 .profile-pic {
     width: 100px;
     height: 100px;
@@ -24,6 +43,22 @@ header h1 {
     top: 20px;
     left: 20px;
 }
+
+.email-icon {
+	position:relative;
+    display: inline-block;
+    margin-left: 20px;
+    color: #ffffffe6;
+    text-decoration: none;
+    font-size: 18px;
+	top: -5px;
+	right: 5px;
+}
+
+.email-icon i {
+    margin-right: 5px;
+}
+
 .status-circle {
     width: 15px;
     height: 15px;
@@ -37,6 +72,7 @@ header h1 {
     top: 4px;
     right: -4px;
 }
+
 section {
     padding: 20px;
     max-width: 800px;
@@ -46,21 +82,86 @@ section {
     border: 1px solid #474747;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 h2 {
     color: #5fb4b7; /* Blue color for section headings */
 }
+
 p {
     font-size: 18px;
     line-height: 1.6;
 }
+
 .status {
     font-weight: bold;
     color: #F28C00; /* Highlighting status text */
 }
+
 footer {
-    background-color: #457B7D; /* Green from the brand color palette */
+    background-color: #457B7D; /* Green footer */
     color: #FFFFFF; /* White text for contrast */
     text-align: center;
     padding: 10px;
-    margin-top: 20px;
+    position: relative;
+    width: 100%;
+    bottom: 0;
+}
+
+
+.wrap {
+    overflow: hidden;
+    position: relative; /* Changed to relative to allow placement just above the footer */
+    height: 120px;
+    bottom: 0;
+}
+
+.bgWave {
+    position: absolute;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background-repeat: repeat;
+    background-position: left bottom;
+    transform-origin: left bottom;
+	opacity: 0.5;
+}
+
+.waveOne {
+    background-size: 80% 120px;
+    background-image: url(https://upload.cc/i1/2020/05/14/A2kBfn.png);
+    animation: wave 12s linear infinite;
+	opacity: 0.5;
+}
+
+.waveTwo {
+    background-size: 80% 120px;
+    background-image: url(https://upload.cc/i1/2020/05/14/A2kBfn.png);
+    animation: wave-reverse 10s linear infinite;
+    right: 0;
+    left: auto;
+	opacity: 0.3;
+}
+
+@keyframes wave {
+    0% {
+        transform: translateX(0)
+    }
+    50% {
+        transform: translateX(-25%)
+    }
+    100% {
+        transform: translateX(-50%)
+    }
+}
+
+@keyframes wave-reverse {
+    0% {
+        transform: translateX(0) scaleY(1)
+    }
+    50% {
+        transform: translateX(25%) scaleY(0.55)
+    }
+    100% {
+        transform: translateX(50%) scaleY(1)
+    }
 }
