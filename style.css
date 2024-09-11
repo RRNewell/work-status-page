@@ -129,14 +129,14 @@ footer {
 }
 
 .waveOne {
-    background-size: 80% 120px;
+    background-size: 50% 120px;
     background-image: url(https://upload.cc/i1/2020/05/14/A2kBfn.png);
     animation: wave 12s linear infinite;
 	opacity: 0.5;
 }
 
 .waveTwo {
-    background-size: 80% 120px;
+    background-size: 50% 120px;
     background-image: url(https://upload.cc/i1/2020/05/14/A2kBfn.png);
     animation: wave-reverse 10s linear infinite;
     right: 0;
