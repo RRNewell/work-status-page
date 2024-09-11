@@ -12,9 +12,7 @@
     <link rel="stylesheet" href="style.css">
     
 </head>
-
 <body>
-
 <header>
     <img src="resources/images/birdy.png" alt="Profile Picture" class="profile-pic">
     <h1>ACG - Ryan Newell</h1>
@@ -47,6 +45,7 @@
     <p style="line-height:0!important; font-size:12px!important">Current UTC Time: <span id="utc-time"></span></p>
     <p style="line-height:0!important; font-size:12px!important">Ryan's Timezone: <i class="fas fa-clock"></i> <span id="localTime">Loading...</span> 
        <img id="timezoneFlag" src="" alt="Flag Icon" style="position:relative; top:5px;border-radius:15px 15px;" width="30" height="20" />
+       <span id="timezoneAbbreviation"></span> <!-- Abbreviation for timezone -->
     </p>
 </footer>
 
@@ -58,8 +57,8 @@
 <input type="hidden" id="timezoneCode" value="Switzerland"> <!-- This will control the timezone -->
 
 <script>
-    let localTimeOffset = 0; // Store the time offset from the UTC time
-    let isDSTActive = false; // Store whether daylight saving time is active
+    let localTimeOffset = 0; // Store the time offset from UTC
+    let isDSTActive = false; // Track whether DST is active
 
     const timezoneMapping = {
         "UK": {
@@ -75,49 +74,57 @@
             flag: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg"
         }
     };
-	async function fetchTimezoneInfo(countryCode) {
-    const timezoneData = timezoneMapping[countryCode] || { apiTimezone: "UTC", flag: "" };
-    
-    try {
-        // Use HTTPS instead of HTTP
-        const response = await fetch(`https://worldtimeapi.org/api/timezone/${timezoneData.apiTimezone}`);
-        if (response.ok) {
-            const data = await response.json();
 
-            // Check if daylight saving time is active
-            isDSTActive = data.dst; // true if daylight saving is active
+    async function fetchTimezoneInfo(countryCode) {
+        const timezoneData = timezoneMapping[countryCode] || { apiTimezone: "UTC", flag: "" };
 
-            // Set the local time from the API and calculate the offset from UTC
-            const utcDateTime = new Date(data.utc_datetime);
-            const localDateTime = new Date(data.datetime);
-            localTimeOffset = localDateTime.getTime() - utcDateTime.getTime();
+        try {
+            // Use HTTPS to request the API
+            const response = await fetch(`https://worldtimeapi.org/api/timezone/${timezoneData.apiTimezone}`);
+            if (response.ok) {
+                const data = await response.json();
 
-            // Adjust for daylight saving if necessary
-            if (isDSTActive) {
-                localTimeOffset += 3600000; // Add 1 hour to the offset
+                // Log full timezone data
+                console.log(`Timezone data for ${countryCode}:`, data);
+
+                // Get the UTC time and local time from the API
+                const utcDateTime = new Date(data.utc_datetime);
+                const localDateTime = new Date(data.datetime);
+
+                // Check if DST is active
+                isDSTActive = data.dst;
+
+                // Set the local time offset
+                localTimeOffset = localDateTime.getTime() - utcDateTime.getTime();
+
+                // Set the initial local time and log it
+                const adjustedTime = new Date(localDateTime.getTime()).toLocaleTimeString();
+                document.getElementById('localTime').textContent = adjustedTime;
+                console.log(`${countryCode} Time: ${adjustedTime}`);
+
+                // Update the timezone flag
+                document.getElementById('timezoneFlag').src = timezoneData.flag;
+
+                // Set the abbreviation for the timezone
+                const abbreviation = data.abbreviation;
+                document.getElementById('timezoneAbbreviation').textContent = `(${abbreviation})`;
+
+            } else {
+                throw new Error('Too many requests or another issue.');
             }
 
-            // Set the initial local time
-            const localTime = new Date(localDateTime.getTime() + (isDSTActive ? 3600000 : 0)).toLocaleTimeString();
-            document.getElementById('localTime').textContent = localTime;
-
-            // Update the timezone flag
-            document.getElementById('timezoneFlag').src = timezoneData.flag;
-        } else {
-            throw new Error('Too many requests or another issue.');
+        } catch (error) {
+            console.error("Failed to fetch timezone data: ", error);
+            document.getElementById('localTime').textContent = "Error fetching time";
+            document.getElementById('timezoneFlag').src = ""; // Reset flag in case of error
         }
-    } catch (error) {
-        console.error("Failed to fetch timezone data: ", error);
-        document.getElementById('localTime').textContent = "Error fetching time";
-        document.getElementById('timezoneFlag').src = ""; // Reset flag in case of error
     }
-}
- 
+
     function incrementLocalTime() {
-        // Increment the local time based on the offset from UTC
+        // Increment the local time every second based on the offset from UTC
         const now = new Date();
-        const localTime = new Date(now.getTime() + localTimeOffset);
-        document.getElementById('localTime').textContent = localTime.toLocaleTimeString();
+        const adjustedLocalTime = new Date(now.getTime() + localTimeOffset);
+        document.getElementById('localTime').textContent = adjustedLocalTime.toLocaleTimeString();
     }
 
     function updateStatus() {
@@ -129,7 +136,7 @@
         const statusCircle = document.getElementById('status-circle');
         const timezoneCode = document.getElementById('timezoneCode').value;
 
-        // Fetch current time and flag based on country (e.g. UK, Germany, Switzerland)
+        // Fetch current time and flag based on the selected country (e.g., UK, Germany, Switzerland)
         fetchTimezoneInfo(timezoneCode);
 
         // Handle work location logic
@@ -175,7 +182,7 @@
 
     // Fetch the timezone info and set up time incrementing
     updateStatus();
-    
+
     // Increment local time every second
     setInterval(incrementLocalTime, 1000);
 
@@ -186,8 +193,5 @@
     }, 1000);
 
 </script>
-
-
-
 </body>
 </html>
