@@ -1,0 +1,27 @@
+name: Update Last Updated Time
+
+on:
+  push:
+    branches:
+      - main  # This runs the action when pushing to the 'main' branch. Adjust if necessary.
+
+jobs:
+  update_time:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Update Last Updated Time
+        run: |
+          CURRENT_UTC=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          sed -i "s|id=\"lastUpdated\" value=\"[^\"]*\"|id=\"lastUpdated\" value=\"$CURRENT_UTC\"|" page.html
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add page.html
+          git commit -m "Auto-update last updated time"
+          git push
