@@ -20,7 +20,7 @@
     <h1>ACG - Ryan Newell</h1>
     <!-- Email Icon -->
     <a href="mailto:RyanNewell@acg.co.uk" class="email-icon">
-        <i class="fas fa-envelope"></i>
+        <i class="fas fa-envelope"></i> Email Ryan
     </a>
 </header>
 
@@ -44,93 +44,151 @@
 
 <footer>
     <p>Current Status: <span class="status-circle" id="status-circle" title="Status Loading..."></span></p>
-    <p>Current UTC Time: <span id="utc-time"></span></p>
+    <p style="line-height:0!important; font-size:12px!important">Current UTC Time: <span id="utc-time"></span></p>
+    <p style="line-height:0!important; font-size:12px!important">Ryan's Timezone: <i class="fas fa-clock"></i> <span id="localTime">Loading...</span> 
+       <img id="timezoneFlag" src="" alt="Flag Icon" style="position:relative; top:5px;border-radius:15px 15px;" width="30" height="20" />
+    </p>
 </footer>
 
 <!-- Hidden Fields -->
-<input type="hidden" id="workLocation" value="work">
+<input type="hidden" id="workLocation" value="home">
+<input type="hidden" id="currentLocation" value="Switzerland">
 <input type="hidden" id="availabilityStatus" value="8 AM - 5 PM">
 <input type="hidden" id="lastUpdated" value="2024-09-11T13:15:00Z"> <!-- Example of last updated in UTC -->
+<input type="hidden" id="timezoneCode" value="Switzerland"> <!-- This will control the timezone -->
 
 <script>
-    // Update work location and status
+    let localTimeOffset = 0; // Store the time offset from the UTC time
+    let isDSTActive = false; // Store whether daylight saving time is active
+
+    const timezoneMapping = {
+        "UK": {
+            apiTimezone: "Europe/London",
+            flag: "https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg"
+        },
+        "Germany": {
+            apiTimezone: "Europe/Berlin",
+            flag: "https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg"
+        },
+        "Switzerland": {
+            apiTimezone: "Europe/Zurich",
+            flag: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg"
+        }
+    };
+
+    async function fetchTimezoneInfo(countryCode) {
+        const timezoneData = timezoneMapping[countryCode] || { apiTimezone: "UTC", flag: "" };
+        
+        try {
+            const response = await fetch(`http://worldtimeapi.org/api/timezone/${timezoneData.apiTimezone}`);
+            if (response.ok) {
+                const data = await response.json();
+
+                // Check if daylight saving time is active
+                isDSTActive = data.dst; // true if daylight saving is active
+
+                // Set the local time from the API and calculate the offset from UTC
+                const utcDateTime = new Date(data.utc_datetime);
+                const localDateTime = new Date(data.datetime);
+                localTimeOffset = localDateTime.getTime() - utcDateTime.getTime();
+
+                // Adjust for daylight saving if necessary
+                if (isDSTActive) {
+                    localTimeOffset += 3600000; // Add 1 hour to the offset
+                }
+
+                // Set the initial local time
+                const localTime = new Date(localDateTime.getTime() + (isDSTActive ? 3600000 : 0)).toLocaleTimeString();
+                document.getElementById('localTime').textContent = localTime;
+
+                // Update the timezone flag
+                document.getElementById('timezoneFlag').src = timezoneData.flag;
+            } else {
+                throw new Error('Too many requests or another issue.');
+            }
+
+        } catch (error) {
+            console.error("Failed to fetch timezone data: ", error);
+            document.getElementById('localTime').textContent = "Error fetching time";
+            document.getElementById('timezoneFlag').src = ""; // Reset flag in case of error
+        }
+    }
+
+    function incrementLocalTime() {
+        // Increment the local time based on the offset from UTC
+        const now = new Date();
+        const localTime = new Date(now.getTime() + localTimeOffset);
+        document.getElementById('localTime').textContent = localTime.toLocaleTimeString();
+    }
+
     function updateStatus() {
         const workLocation = document.getElementById('workLocation').value;
         const availability = document.getElementById('availabilityStatus').value;
         const lastUpdated = document.getElementById('lastUpdated').value;
-
         const locationElement = document.getElementById('location');
         const availabilityElement = document.getElementById('availability');
         const statusCircle = document.getElementById('status-circle');
+        const timezoneCode = document.getElementById('timezoneCode').value;
 
-        // Update work location
-        if (workLocation === 'home') {
-            locationElement.innerHTML = `Working from home <i class="fas fa-home"></i>`;
-        } else if (workLocation === 'work') {
-            locationElement.innerHTML = `In Office <i class="fas fa-building"></i>`;
+        // Fetch current time and flag based on country (e.g. UK, Germany, Switzerland)
+        fetchTimezoneInfo(timezoneCode);
+
+        // Handle work location logic
+        if (timezoneCode === "Germany" || timezoneCode === "Switzerland") {
+            locationElement.innerHTML = `Working abroad <i class="fas fa-plane"></i>`;
+        } else {
+            if (workLocation === 'home') {
+                locationElement.innerHTML = `Working from home <i class="fas fa-home"></i>`;
+            } else if (workLocation === 'work') {
+                locationElement.innerHTML = `In Office <i class="fas fa-building"></i>`;
+            }
         }
 
-        // Update availability
         availabilityElement.textContent = availability;
-
-        // Call the function to handle the color and tooltip based on lastUpdated
         updateLastUpdatedStatus(lastUpdated, statusCircle);
     }
 
-    // Function to update status circle color and tooltip based on lastUpdated time
     function updateLastUpdatedStatus(lastUpdated, statusCircle) {
-        const lastUpdatedDate = new Date(lastUpdated); // Convert lastUpdated value to Date
-        const currentDate = new Date(); // Get current UTC time
-        const diffHours = Math.abs(currentDate - lastUpdatedDate) / 36e5; // Difference in hours
+        const lastUpdatedDate = new Date(lastUpdated);
+        const currentDate = new Date();
+        const diffHours = Math.abs(currentDate - lastUpdatedDate) / 36e5;
 
-        // Define the color range for different time periods
         let backgroundColor;
         if (diffHours <= 2) {
-            backgroundColor = '#32CD32'; // Green for 0-2 hours
+            backgroundColor = '#32CD32';
         } else if (diffHours > 2 && diffHours <= 4) {
-            backgroundColor = '#9ACD32'; // Yellow-green for 2-4 hours
+            backgroundColor = '#9ACD32';
         } else if (diffHours > 4 && diffHours <= 5) {
-            backgroundColor = '#FFD700'; // Yellow for 4-5 hours
+            backgroundColor = '#FFD700';
         } else if (diffHours > 5 && diffHours <= 6) {
-            backgroundColor = '#FFA500'; // Orange for 5-6 hours
+            backgroundColor = '#FFA500';
         } else if (diffHours > 6 && diffHours <= 7) {
-            backgroundColor = '#FF8C00'; // Dark Orange for 6-7 hours
+            backgroundColor = '#FF8C00';
         } else if (diffHours > 7 && diffHours <= 8) {
-            backgroundColor = '#FF4500'; // Bright Red for 7-8 hours
+            backgroundColor = '#FF4500';
         } else {
-            backgroundColor = '#FF0000'; // Red for over 8 hours
+            backgroundColor = '#FF0000';
         }
 
-        // Set the background color of the status circle
         statusCircle.style.backgroundColor = backgroundColor;
-
-        // Calculate tooltip message (in hours or days)
-        let tooltipMessage;
-        if (diffHours < 24) {
-            tooltipMessage = `Last updated ${diffHours.toFixed(2)} hours ago`;
-        } else {
-            const diffDays = diffHours / 24;
-            tooltipMessage = `Last updated ${diffDays.toFixed(2)} days ago`;
-        }
-        statusCircle.title = tooltipMessage;
+        statusCircle.title = `Last updated ${diffHours.toFixed(2)} hours ago`;
     }
 
-    // Function to update the UTC time in the footer
-    function updateUTCTime() {
-        const now = new Date();
-        const utcTime = now.toUTCString().slice(17, 25); // Get only the time part in UTC
-
-        // Update the UTC time in both locations
-        document.getElementById('utc-time').textContent = utcTime;
-    }
-
-    // Initial call to update the status and UTC time
+    // Fetch the timezone info and set up time incrementing
     updateStatus();
-    updateUTCTime();
+    
+    // Increment local time every second
+    setInterval(incrementLocalTime, 1000);
 
-    // Update the UTC time every second
-    setInterval(updateUTCTime, 1000); // Update every second
+    // Update UTC time every second
+    setInterval(() => {
+        const now = new Date();
+        document.getElementById('utc-time').textContent = now.toUTCString().slice(17, 25);
+    }, 1000);
+
 </script>
+
+
 
 </body>
 </html>
