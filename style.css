@@ -1,0 +1,66 @@
+body {
+    font-family: Tahoma, sans-serif;
+    background-color: #585857; /* Slate background */
+    color: #FFFFFF; /* White text for readability */
+    margin: 0;
+    padding: 0;
+}
+header {
+    background-color: #F28C00; /* Orange header */
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+header h1 {
+    color: #FFFFFF;
+    margin: 0;
+}
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid #FFFFFF;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+.status-circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    box-shadow: inset 0px 1px 4px rgba(0, 0, 0, 0.3), 0px 1px 3px rgba(0, 0, 0, 0.3);
+    border: 2px solid #FFFFFF;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    top: 4px;
+    right: -4px;
+}
+section {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #6d6d6d;
+    color: #ffffff;
+    border: 1px solid #474747;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+h2 {
+    color: #5fb4b7; /* Blue color for section headings */
+}
+p {
+    font-size: 18px;
+    line-height: 1.6;
+}
+.status {
+    font-weight: bold;
+    color: #F28C00; /* Highlighting status text */
+}
+footer {
+    background-color: #457B7D; /* Green from the brand color palette */
+    color: #FFFFFF; /* White text for contrast */
+    text-align: center;
+    padding: 10px;
+    margin-top: 20px;
+}

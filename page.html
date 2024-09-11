@@ -1,11 +1,131 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ryan's Work Status</title>
+    
+    <!-- Link to Font Awesome Free Version -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="style.css">
+    
 </head>
 <body>
-    <h1>Current Work Status</h1>
-    <p><strong>Location:</strong> <span id="location">Working from home</span></p>
-    <p><strong>Availability:</strong> <span id="availability">9 AM - 5 PM</span></p>
-    <p><strong>Notes:</strong> <span id="notes">Available for calls</span></p>
+
+<header>
+    <img src="resources/images/birdy.png" alt="Profile Picture" class="profile-pic">
+    <h1>ACG - Work Status: Ryan Newell</h1>
+</header>
+
+<section>
+    <h2>Work Location</h2>
+    <p>Currently: <span class="status" id="location">Loading...</span></p>
+
+    <h2>Availability</h2>
+    <p>Available from: <span class="status" id="availability">Loading...</span></p>
+
+    <h2>Additional Notes</h2>
+    <p id="notes">Feel free to reach out via Teams or email if you need anything!</p>
+</section>
+
+<footer>
+	<div style="text-align:center">
+		<!-- Current Status -->
+		<p>Current Status: <span class="status-circle" id="status-circle" title="Status Loading..."></span></p>
+
+		<!-- Option 1: UTC Time Below the Status -->
+		<p style="font-size:small; font">Current UTC Time: <span id="utc-time"></span></p>
+	<div>
+
+</footer>
+
+<!-- Hidden Fields -->
+<input type="hidden" id="workLocation" value="work">
+<input type="hidden" id="availabilityStatus" value="8 AM - 5 PM">
+<input type="hidden" id="lastUpdated" value="2024-09-11T13:15:00Z"> <!-- Example of last updated in UTC -->
+
+<script>
+    // Update work location and status
+    function updateStatus() {
+        const workLocation = document.getElementById('workLocation').value;
+        const availability = document.getElementById('availabilityStatus').value;
+        const lastUpdated = document.getElementById('lastUpdated').value;
+
+        const locationElement = document.getElementById('location');
+        const availabilityElement = document.getElementById('availability');
+        const statusCircle = document.getElementById('status-circle');
+
+        // Update work location
+        if (workLocation === 'home') {
+            locationElement.innerHTML = `Working from home <i class="fas fa-home"></i>`;
+        } else if (workLocation === 'work') {
+            locationElement.innerHTML = `In Office <i class="fas fa-building"></i>`;
+        }
+
+        // Update availability
+        availabilityElement.textContent = availability;
+
+        // Call the function to handle the color and tooltip based on lastUpdated
+        updateLastUpdatedStatus(lastUpdated, statusCircle);
+    }
+
+    // Function to update status circle color and tooltip based on lastUpdated time
+    function updateLastUpdatedStatus(lastUpdated, statusCircle) {
+        const lastUpdatedDate = new Date(lastUpdated); // Convert lastUpdated value to Date
+        const currentDate = new Date(); // Get current UTC time
+        const diffHours = Math.abs(currentDate - lastUpdatedDate) / 36e5; // Difference in hours
+
+        // Define the color range for different time periods
+        let backgroundColor;
+        if (diffHours <= 2) {
+            backgroundColor = '#32CD32'; // Green for 0-2 hours
+        } else if (diffHours > 2 && diffHours <= 4) {
+            backgroundColor = '#9ACD32'; // Yellow-green for 2-4 hours
+        } else if (diffHours > 4 && diffHours <= 5) {
+            backgroundColor = '#FFD700'; // Yellow for 4-5 hours
+        } else if (diffHours > 5 && diffHours <= 6) {
+            backgroundColor = '#FFA500'; // Orange for 5-6 hours
+        } else if (diffHours > 6 && diffHours <= 7) {
+            backgroundColor = '#FF8C00'; // Dark Orange for 6-7 hours
+        } else if (diffHours > 7 && diffHours <= 8) {
+            backgroundColor = '#FF4500'; // Bright Red for 7-8 hours
+        } else {
+            backgroundColor = '#FF0000'; // Red for over 8 hours
+        }
+
+        // Set the background color of the status circle
+        statusCircle.style.backgroundColor = backgroundColor;
+
+        // Calculate tooltip message (in hours or days)
+        let tooltipMessage;
+        if (diffHours < 24) {
+            tooltipMessage = `Last updated ${diffHours.toFixed(2)} hours ago`;
+        } else {
+            const diffDays = diffHours / 24;
+            tooltipMessage = `Last updated ${diffDays.toFixed(2)} days ago`;
+        }
+        statusCircle.title = tooltipMessage;
+    }
+
+    // Function to update the UTC time in the footer
+    function updateUTCTime() {
+        const now = new Date();
+        const utcTime = now.toUTCString().slice(17, 25); // Get only the time part in UTC
+
+        // Update the UTC time in both locations
+        document.getElementById('utc-time').textContent = utcTime;
+        document.getElementById('utc-time-right').textContent = utcTime;
+    }
+
+    // Initial call to update the status and UTC time
+    updateStatus();
+    updateUTCTime();
+
+    // Update the UTC time every second
+    setInterval(updateUTCTime, 1000); // Update every second
+</script>
+
 </body>
 </html>
