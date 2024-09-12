@@ -21,7 +21,6 @@ async function fetchTimezoneInfo(countryCode) {
     console.log(`Fetching timezone info for: ${countryCode}`);
 
     try {
-        // Use HTTPS to request the API
         const response = await fetch(`https://worldtimeapi.org/api/timezone/${timezoneData.apiTimezone}`);
         if (response.ok) {
             const data = await response.json();
@@ -49,10 +48,8 @@ async function fetchTimezoneInfo(countryCode) {
             const abbreviation = data.abbreviation;
             document.getElementById('timezoneAbbreviation').textContent = `(${abbreviation})`;
 
-            // Update the availability display with BST/GMT if in the UK
-            if (countryCode === "UK") {
-                updateAvailability(abbreviation);
-            }
+            // Return the fetched data, including datetime, to status.js
+            return data;
 
         } else {
             throw new Error('Failed to fetch timezone data: ' + response.status);
@@ -62,9 +59,9 @@ async function fetchTimezoneInfo(countryCode) {
         console.error("Error during fetch:", error);
         document.getElementById('localTime').textContent = "Error fetching time";
         document.getElementById('timezoneFlag').src = ""; // Reset flag in case of error
+        return null; // Ensure we return null on error
     }
 }
-
 function updateAvailability(abbreviation) {
     const availabilityElement = document.getElementById('availability');
     const availability = document.getElementById('availabilityStatus').value;
