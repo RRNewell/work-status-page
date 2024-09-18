@@ -46,11 +46,12 @@
 </footer>
 
 <!-- Hidden Fields -->
-<input type="hidden" id="workLocation" value="home">
-<input type="hidden" id="currentLocation" value="Switzerland">
-<input type="hidden" id="availabilityStatus" value="8 AM - 5 PM">
-<input type="hidden" id="lastUpdated" value="2024-09-11T21:20:00Z">
-<input type="hidden" id="timezoneCode" value="Switzerland">
+<input type="hidden" id="hdn_workLocation" value="home">
+<input type="hidden" id="hdn_availabilityStatus" value="8 AM - 5 PM">
+<input type="hidden" id="hdn_lastUpdated" value="2024-09-17T21:20:00Z">
+<input type="hidden" id="hdn_localTimezone" value="UK">
+<input type="hidden" id="hdn_availabilityTimezone" value="UK">
+<input type="hidden" id="hdn_currentLocation" value="UK">
 
 <!-- Link to JS files -->
 <script src="resources/scripts/utilities.js"></script>
@@ -62,11 +63,6 @@
         // Call the status update function when the page loads
         updateStatus();
 
-        // Set the UTC clock update
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('utc-time').textContent = now.toUTCString().slice(17, 25);
-        }, 1000);
     });
 </script>
 </body>

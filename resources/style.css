@@ -179,7 +179,7 @@ footer {
         }
 
         .floating-z {
-            position: absolute;
+            position: relative;
             top: 0;
             right: -10px;
             animation: floatZ 2s infinite;

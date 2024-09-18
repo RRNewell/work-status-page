@@ -1,84 +1,207 @@
-let isDSTActive = false; // Ensure this is declared here
-let localTimezoneOffset = 0; // Store the offset for the selected timezone
+async function updateStatus() {
+    const eWorkLocation = document.getElementById('hdn_workLocation').value;
+    const eAvailabilityStatus = document.getElementById('hdn_availabilityStatus').value; // Example: "8 AM - 5 PM"
+    const eCurrentLocation = document.getElementById('hdn_currentLocation');
+    const eLocalTimezone = document.getElementById('hdn_localTimezone').value;
+    const eAvailabilityTimezone = document.getElementById('hdn_availabilityTimezone').value;
 
-function updateStatus() {
-    const workLocation = document.getElementById('workLocation').value;
-    const availability = document.getElementById('availabilityStatus').value;
-    const locationElement = document.getElementById('location');
-    const availabilityElement = document.getElementById('availability');
-    const timezoneCode = document.getElementById('timezoneCode').value;
+    console.log("Updating status for timezone:", eLocalTimezone);
 
-    console.log("Updating status for timezone:", timezoneCode);
+    // Fetch timezone info for the selected local timezone and UTC timezone
+    const selectedTimeZone = timeZones[eLocalTimezone];
+    const AvailabilityTimeZone = timeZones[eAvailabilityTimezone];
+    const utcTimeZone = timeZones["UTC"];
 
-    // Ensure isDSTActive is defined
-    if (typeof isDSTActive === 'undefined') {
-        console.error('isDSTActive is not defined, setting it to false.');
-        isDSTActive = false; // Default to false if undefined
-    }
+    if (selectedTimeZone && AvailabilityTimeZone) {
+        // Fetch data for the selected local timezone and UTC
+        await selectedTimeZone.initializeTimeZone();
+        await AvailabilityTimeZone.initializeTimeZone();
+        await utcTimeZone.initializeTimeZone();
 
-    // Parse the availability hours from the hidden field
-    const { start, end } = parseAvailabilityHours(availability);
-
-    // Fetch current time and flag based on the selected country (e.g., UK, Germany, Switzerland)
-    fetchTimezoneInfo(timezoneCode).then((timezoneData) => {
-        if (!timezoneData || !timezoneData.datetime) {
-            console.error('Timezone data is undefined or does not contain datetime.');
-            return;
-        }
+        // Initially set the UTC time
+        document.getElementById('utc-time').textContent = utcTimeZone.getTime24Hour();
         
-        const currentTime = new Date(timezoneData.datetime); // Use the fetched time from the API
+        // Set the local time based on UTC and the selected timezone offset
+        updateLocalTimeWithOffset(selectedTimeZone);
 
-        // Instead of manually calculating the offset, use the getTimezoneOffset() method
-        const browserTimezoneOffset = new Date().getTimezoneOffset() * 60000; // In milliseconds
-        const timezoneOffset = currentTime.getTimezoneOffset() * 60000; // API timezone offset in milliseconds
+        document.getElementById('timezoneFlag').src = selectedTimeZone.getFlag();
 
-        // Calculate the correct offset based on the difference between the browser's timezone and the fetched timezone
-        localTimezoneOffset = timezoneOffset - browserTimezoneOffset;
+        const localTimeInfo = selectedTimeZone.displayTimezoneInfo();
 
-        // Start updating local time every second
-        updateLocalTime();
+        // Calculate the current adjusted UTC time for eAvailabilityStatus comparison
+        const currentTimeInAvailabilityTimeZone = getAdjustedTime(utcTimeZone, AvailabilityTimeZone);
+        const isWithinAvailability = checkAvailability(eAvailabilityStatus, currentTimeInAvailabilityTimeZone);
 
-        const now = new Date();
-        const currentHour = now.getUTCHours() + (isDSTActive ? 1 : 0); // Adjust for DST if active
-        console.log(`Current UTC Hour: ${now.getUTCHours()}, Adjusted Hour: ${currentHour}`);
-
-        // Handle work location logic based on availability hours
-        if (currentHour >= start && currentHour < end) {
-            if (timezoneCode === "Germany" || timezoneCode === "Switzerland") {
-                locationElement.innerHTML = `Working abroad <i class="fas fa-plane"></i>`;
+        // If outside of eAvailabilityStatus, set to Offline
+        if (!isWithinAvailability) {
+            location.innerHTML = `<div style="display:inline; color:#a51d1d"> Offline <i class="fas fa-moon moon"></i>
+                <span class="floating-z">Z</span>
+                <span class="floating-z" style="right: -11px;">Z</span>
+                <span class="floating-z" style="right: -12px;">Z</span></div>`;
+        } else {
+            if (localTimeInfo.abroad) {
+                location.innerHTML = `Working abroad <i class="fas fa-plane"></i>`;
             } else {
-                if (workLocation === 'home') {
-                    locationElement.innerHTML = `Working from home <i class="fas fa-home"></i>`;
-                } else if (workLocation === 'work') {
-                    locationElement.innerHTML = `Working in office <i class="fas fa-building"></i>`;
+                if (eWorkLocation === 'home') {
+                    location.innerHTML = `Working from home <i class="fas fa-home"></i>`;
+                } else if (eWorkLocation === 'work') {
+                    location.innerHTML = `Working in office <i class="fas fa-building"></i>`;
                 }
             }
-        } else {
-            locationElement.innerHTML = `Offline <i class="fas fa-moon moon"></i><span class="floating-z">Z</span><span class="floating-z" style="right: -30px;">Z</span><span class="floating-z" style="right: -50px;">Z</span>`;
-            locationElement.classList.add("offline");
         }
 
-        // Update the availability display with BST/GMT
-        updateAvailability('BST');
+        // Update the eAvailabilityStatus display with the correct timezone abbreviation
+        updateAvailability(AvailabilityTimeZone.abbreviation);
+    } else {
+        console.error("No timezone selected.");
+    }
 
-        // Update the status circle based on the last updated time
-        const lastUpdated = document.getElementById('lastUpdated').value;
-        updateLastUpdatedStatus(lastUpdated);
-    }).catch((error) => {
-        console.error('Failed to fetch timezone data', error);
-    });
+    // Update the last updated status circle
+    const lastUpdated = document.getElementById('hdn_lastUpdated').value;
+    updateLastUpdatedStatus(lastUpdated);
+
+    // Now, we call the function to start incrementing UTC time
+    setInterval(() => incrementUTCTime(selectedTimeZone), 1000);  // Call incrementUTCTime every second
 }
 
-function updateLocalTime() {
-    // Start updating local time every second using the calculated timezone offset
-    setInterval(() => {
-        const now = new Date();
-        const adjustedLocalTime = new Date(now.getTime() + localTimezoneOffset);
-        document.getElementById('localTime').textContent = adjustedLocalTime.toLocaleTimeString();
-    }, 1000);
+// Function to adjust UTC time by the selected timezone offset
+function getAdjustedTime(utcTimeZone, AvailabilityTimeZone) {
+    const utcTime = utcTimeZone.rawDateTime.split('T')[1].split('.')[0]; // Get UTC time from raw data
+    let [hours, minutes] = utcTime.split(":").map(Number);
+
+    // Get the offset from the eAvailabilityStatus timezone (e.g., "+02:00" or "-01:00")
+    const offsetSign = AvailabilityTimeZone.utcOffset[0];
+    const offsetHours = parseInt(AvailabilityTimeZone.utcOffset.slice(1, 3), 10);
+    const offsetMinutes = parseInt(AvailabilityTimeZone.utcOffset.slice(4), 10);
+
+    // Apply the offset to the UTC time
+    if (offsetSign === '+') {
+        hours += offsetHours;
+        minutes += offsetMinutes;
+    } else {
+        hours -= offsetHours;
+        minutes -= offsetMinutes;
+    }
+
+    // Handle overflow for hours and minutes
+    if (minutes >= 60) {
+        minutes -= 60;
+        hours += 1;
+    } else if (minutes < 0) {
+        minutes += 60;
+        hours -= 1;
+    }
+
+    if (hours >= 24) {
+        hours -= 24;
+    } else if (hours < 0) {
+        hours += 24;
+    }
+
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
+// Function to check if the current time is within eAvailabilityStatus hours
+function checkAvailability(eAvailabilityStatus, currentTime) {
+    const [start, end] = eAvailabilityStatus.split(' - ').map(parseTime);
+    const current = parseTime(currentTime);
 
+    // Check if the current time is within the eAvailabilityStatus window
+    return current >= start && current <= end;
+}
+
+// Helper function to convert "8 AM - 5 PM" format to a comparable time number (e.g., 08:00 = 800)
+function parseTime(timeStr) {
+    let [hours, minutes] = timeStr.split(":").map(Number);
+    return hours * 100 + minutes; // Convert to a format like 800, 1700 for comparison
+}
+
+// Function to update local time based on UTC and offset
+function updateLocalTimeWithOffset(selectedTimeZone) {
+    const utcTimeElement = document.getElementById('utc-time').textContent;
+    let [hours, minutes, seconds] = utcTimeElement.split(":").map(Number);
+
+    // Convert the UTC offset (e.g., "+02:00" or "-01:00") into hours and minutes
+    const offsetSign = selectedTimeZone.utcOffset[0];
+    const offsetHours = parseInt(selectedTimeZone.utcOffset.slice(1, 3), 10);
+    const offsetMinutes = parseInt(selectedTimeZone.utcOffset.slice(4), 10);
+
+    // Apply the offset to the UTC time
+    if (offsetSign === '+') {
+        hours += offsetHours;
+        minutes += offsetMinutes;
+    } else {
+        hours -= offsetHours;
+        minutes -= offsetMinutes;
+    }
+
+    // Handle overflow for hours and minutes
+    if (minutes >= 60) {
+        minutes -= 60;
+        hours += 1;
+    } else if (minutes < 0) {
+        minutes += 60;
+        hours -= 1;
+    }
+
+    if (hours >= 24) {
+        hours -= 24;
+    } else if (hours < 0) {
+        hours += 24;
+    }
+
+    // Update the local time element with the adjusted time
+    document.getElementById('localTime').textContent =
+        String(hours).padStart(2, '0') + ":" +
+        String(minutes).padStart(2, '0') + ":" +
+        String(seconds).padStart(2, '0');
+}
+
+// Modify the incrementUTCTime function to increment both UTC and local time
+function incrementUTCTime(selectedTimeZone) {
+    const utcTimeElement = document.getElementById('utc-time');
+    let currentUTCTime = utcTimeElement.textContent.split(":").map(Number);
+
+    let hours = currentUTCTime[0];
+    let minutes = currentUTCTime[1];
+    let seconds = currentUTCTime[2];
+
+    // Increment the seconds
+    seconds += 1;
+
+    // Handle overflow for minutes and hours
+    if (seconds >= 60) {
+        seconds = 0;
+        minutes += 1;
+    }
+    if (minutes >= 60) {
+        minutes = 0;
+        hours += 1;
+    }
+    if (hours >= 24) {
+        hours = 0;
+    }
+
+    // Update the UTC time element
+    utcTimeElement.textContent =
+        String(hours).padStart(2, '0') + ":" +
+        String(minutes).padStart(2, '0') + ":" +
+        String(seconds).padStart(2, '0');
+
+    // Now, update the local time with the same offset logic
+    updateLocalTimeWithOffset(selectedTimeZone);
+}
+
+// Update eAvailabilityStatus with abbreviation
+function updateAvailability(abbreviation) {
+    const availabilityElement = document.getElementById('availability');
+    const availability  = document.getElementById('hdn_availabilityStatus').value;
+
+    // Append the abbreviation (BST/GMT) to the eAvailabilityStatus hours
+    availabilityElement.textContent = `Available from ${availability } (${abbreviation})`;
+}
+
+// Update the last updated status
 function updateLastUpdatedStatus(lastUpdated) {
     const statusCircle = document.getElementById('status-circle');
     const lastUpdatedDate = new Date(lastUpdated);
@@ -105,3 +228,5 @@ function updateLastUpdatedStatus(lastUpdated) {
     statusCircle.style.backgroundColor = backgroundColor;
     statusCircle.title = `Last updated ${diffHours.toFixed(2)} hours ago`;
 }
+
+
