@@ -77,8 +77,8 @@ header h1 {
 
 section {
     padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 60%;
+    margin: 35px auto;
     background-color: #6d6d6d;
     color: #ffffff;
     border: 1px solid #474747;
@@ -87,11 +87,12 @@ section {
 
 h2 {
     color: #5fb4b7; /* Blue color for section headings */
+	line-height: 14px
 }
 
 p {
-    font-size: 18px;
-    line-height: 1.6;
+    font-size: 14px;
+    line-height: 1.2;
 }
 
 .status {

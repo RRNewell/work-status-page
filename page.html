@@ -6,8 +6,86 @@
     <title>Ryan's Work Status</title>
     
     <!-- Link to Font Awesome Free Version -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="resources/style.css">
+	
+	  <style>
+		/* Updated CSS for day squares */
+		.week-days {
+			display: flex;
+			justify-content: space-between;
+			margin: 10px 0;
+			padding: 0px 18%;
+		}
+		.day {
+			width: 70px;
+			height: 70px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			font-size: 10px;
+			font-weight: bold;
+			color: #5e5e5e;
+			position: relative;
+			border-radius: 10px;
+			transition: transform 0.2s ease, box-shadow 0.2s ease;
+		}
+		.day:hover {
+			transform: scale(1.05); /* Slight zoom on hover */
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow */
+		}
+		.day i {
+			font-size: 22px;
+			margin-bottom: 5px;
+		}
+		.arrow {
+			position: absolute;
+			top: -20px;
+			left: 50%;
+			transform: translateX(-50%);
+			font-size: 19px!important;
+		}
+        .wfh { background-color: #75d478; }       /* Green for WFH */
+        .in-office { background-color: #80c7ff; } /* Blue for In Office */
+        .abroad { background-color: #ffc775; }    /* Orange for Working Abroad */
+        .annual-leave { background-color: #ff8f62; }   /* Red for Holiday Leave */
+        .off { background-color: #c7c7c7; }       /* Grey for Day Off */
+        .emergency { background-color: #ff8585; } /* Yellow for Emergency Off */
+		
+		.task-grid {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 10px;
+			max-height: 120px;
+			overflow-y: scroll;
+			border: 2px solid #ccc;
+			padding: 10px;
+			border-radius: 8px;
+			background-color: #4d4d4d;
+		}
+        .task {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #746e6e;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .task .icon {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        .task .details {
+            flex-grow: 1;
+        }
+        .priority {
+            font-size: 12px;
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 <header>
@@ -18,13 +96,91 @@
     </a>
 </header>
 
-<main>
-    <section>
-        <h2>Work Location</h2>
-        <p>Currently: <span class="status" id="location">Loading...</span></p>
 
-        <h2>Availability</h2>
-        <p>Available from: <span class="status" id="availability">Loading...</span></p>
+
+
+<main>
+    <div>
+        <div class="week-days">
+            <div class="day wfh" title="Working from Home">
+				<i class="fas fa-chevron-down arrow" style="color: #D3D3D3"></i>
+                <i class="fas fa-home"></i>
+                <span>Mon</span>
+            </div>
+            <div class="day in-office" title="In Office">
+                <i class="fas fa-building"></i>
+                <span>Tue</span>
+            </div>
+            <div class="day in-office" title="In Office">
+                <i class="fas fa-building"></i>
+                <span>Wed</span>
+            </div>
+            <div class="day abroad" title="Working Abroad">
+                <i class="fas fa-plane"></i>
+                <span>Thu</span>
+            </div>
+            <div class="day annual-leave" title="Annual Leave">
+                <i class="fas fa-umbrella-beach"></i>
+                <span>Fri</span>
+            </div>
+            <div class="day emergency" title="Off but taking emergencies">
+                <i class="fas fa-bed-pulse"></i>
+                <span>Sat</span>
+            </div>
+            <div class="day off" title="Day Off">
+                <i class="fas fa-bed"></i>
+                <span>Sun</span>
+            </div>
+        </div>
+    </div>
+	</div>
+    <section class="status-container">
+	<div style="display: flex; justify-content: space-between; width: 100%;">
+		<div style="flex: 1; background-color: #616161; text-align: center; border-radius: 10px 10px; border: 2px solid #515151;">
+			<h2>Work Location</h2>
+			<p>Currently: <span class="status" id="location">Loading...</span></p>
+		</div>
+		<div style="flex: 1; background-color: #616161; text-align: center; border-radius: 10px 10px; border: 2px solid #515151;">
+			<h2>Availability</h2>
+			<p>Available from: <span class="status" id="availability">Loading...</span></p>
+		</div>
+	</div>
+
+			
+		<h2>Working On</h2>
+		<div class="task-grid">
+			<div class="task">
+				<i class="fas fa-code icon"></i>
+				<div class="details">
+					<strong>Core Web Dev</strong><br>
+					<span>dummy description</span>
+				</div>
+				<span class="priority" style="color: red; text-shadow: 0px 2px 4px black;">
+					Business Critical <i class="fas fa-exclamation-triangle"></i> 
+				</span>
+			</div>
+			<div class="task">
+				<i class="fas fa-envelope icon"></i>
+				<div class="details">
+					<strong>Request Emails</strong><br>
+					<span>dummy description</span>
+				</div>
+				<span class="priority" style="color: orange; text-shadow: 0px 2px 4px black;">
+					Medium Priority <i class="fas fa-exclamation-circle"></i> 
+				</span>
+			</div>
+			<div class="task">
+				<i class="fas fa-chart-line icon"></i>
+				<div class="details">
+					<strong>Reports</strong><br>
+					<span>dummy description</span>
+				</div>
+				<span class="priority" style="color: #00bfa5; text-shadow: 0px 2px 4px black;">
+					Low Priority <i class="fas fa-check-circle"></i> 
+				</span>
+			</div>
+		</div>
+
 
         <h2>Additional Notes</h2>
         <p id="notes">Feel free to reach out via Teams or email if you need anything!</p>
@@ -48,7 +204,7 @@
 <!-- Hidden Fields -->
 <input type="hidden" id="hdn_workLocation" value="work">
 <input type="hidden" id="hdn_availabilityStatus" value="8 AM - 5 PM">
-<input type="hidden" id="hdn_lastUpdated" value="2024-09-18T10:27:00Z">
+<input type="hidden" id="hdn_lastUpdated" value="2024-09-18T15:06:00Z">
 <input type="hidden" id="hdn_localTimezone" value="UK">
 <input type="hidden" id="hdn_availabilityTimezone" value="UK">
 <input type="hidden" id="hdn_currentLocation" value="UK">
