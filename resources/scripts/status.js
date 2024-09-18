@@ -9,13 +9,13 @@ async function updateStatus() {
 
     // Fetch timezone info for the selected local timezone and UTC timezone
     const selectedTimeZone = timeZones[eLocalTimezone];
-    const AvailabilityTimeZone = timeZones[eAvailabilityTimezone];
+    const selectedAvailableTimeZone = timeZones[eAvailabilityTimezone];
     const utcTimeZone = timeZones["UTC"];
 
-    if (selectedTimeZone && AvailabilityTimeZone) {
+    if (selectedTimeZone && selectedAvailableTimeZone) {
         // Fetch data for the selected local timezone and UTC
         await selectedTimeZone.initializeTimeZone();
-        await AvailabilityTimeZone.initializeTimeZone();
+        await selectedAvailableTimeZone.initializeTimeZone();
         await utcTimeZone.initializeTimeZone();
 
         // Initially set the UTC time
@@ -29,29 +29,29 @@ async function updateStatus() {
         const localTimeInfo = selectedTimeZone.displayTimezoneInfo();
 
         // Calculate the current adjusted UTC time for eAvailabilityStatus comparison
-        const currentTimeInAvailabilityTimeZone = getAdjustedTime(utcTimeZone, AvailabilityTimeZone);
+        const currentTimeInAvailabilityTimeZone = getAdjustedTime(utcTimeZone, selectedAvailableTimeZone);
         const isWithinAvailability = checkAvailability(eAvailabilityStatus, currentTimeInAvailabilityTimeZone);
 
         // If outside of eAvailabilityStatus, set to Offline
         if (!isWithinAvailability) {
-            location.innerHTML = `<div style="display:inline; color:#a51d1d"> Offline <i class="fas fa-moon moon"></i>
+			document.getElementById('location').innerHTML = `<div style="display:inline; color:#a51d1d"> Offline <i class="fas fa-moon moon"></i>
                 <span class="floating-z">Z</span>
                 <span class="floating-z" style="right: -11px;">Z</span>
                 <span class="floating-z" style="right: -12px;">Z</span></div>`;
         } else {
             if (localTimeInfo.abroad) {
-                location.innerHTML = `Working abroad <i class="fas fa-plane"></i>`;
+                document.getElementById('location').innerHTML = `Working abroad <i class="fas fa-plane"></i>`;
             } else {
                 if (eWorkLocation === 'home') {
-                    location.innerHTML = `Working from home <i class="fas fa-home"></i>`;
+                    document.getElementById('location').innerHTML = `Working from home <i class="fas fa-home"></i>`;
                 } else if (eWorkLocation === 'work') {
-                    location.innerHTML = `Working in office <i class="fas fa-building"></i>`;
+                    document.getElementById('location').innerHTML = `Working in office <i class="fas fa-building"></i>`;
                 }
             }
         }
 
         // Update the eAvailabilityStatus display with the correct timezone abbreviation
-        updateAvailability(AvailabilityTimeZone.abbreviation);
+        updateAvailability(selectedAvailableTimeZone.abbreviation);
     } else {
         console.error("No timezone selected.");
     }
@@ -65,14 +65,16 @@ async function updateStatus() {
 }
 
 // Function to adjust UTC time by the selected timezone offset
-function getAdjustedTime(utcTimeZone, AvailabilityTimeZone) {
+function getAdjustedTime(utcTimeZone, selectedAvailableTimeZone) {
     const utcTime = utcTimeZone.rawDateTime.split('T')[1].split('.')[0]; // Get UTC time from raw data
     let [hours, minutes] = utcTime.split(":").map(Number);
 
     // Get the offset from the eAvailabilityStatus timezone (e.g., "+02:00" or "-01:00")
-    const offsetSign = AvailabilityTimeZone.utcOffset[0];
-    const offsetHours = parseInt(AvailabilityTimeZone.utcOffset.slice(1, 3), 10);
-    const offsetMinutes = parseInt(AvailabilityTimeZone.utcOffset.slice(4), 10);
+    const offsetSign = selectedAvailableTimeZone.utcOffset[0];
+    const offsetHours = parseInt(selectedAvailableTimeZone.utcOffset.slice(1, 3), 10);
+    const offsetMinutes = parseInt(selectedAvailableTimeZone.utcOffset.slice(4), 10);
+
+    console.log(`UTC Time: ${hours}:${minutes}, Offset: ${offsetSign}${offsetHours}:${offsetMinutes}`);
 
     // Apply the offset to the UTC time
     if (offsetSign === '+') {
@@ -98,13 +100,20 @@ function getAdjustedTime(utcTimeZone, AvailabilityTimeZone) {
         hours += 24;
     }
 
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    const adjustedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    console.log(`Adjusted Time: ${adjustedTime}`);
+    
+    return adjustedTime;
 }
+
 
 // Function to check if the current time is within eAvailabilityStatus hours
 function checkAvailability(eAvailabilityStatus, currentTime) {
     const [start, end] = eAvailabilityStatus.split(' - ').map(parseTime);
     const current = parseTime(currentTime);
+	
+	console.log(`Checking availability: Start: ${start}, End: ${end}, Current: ${current}`);
+
 
     // Check if the current time is within the eAvailabilityStatus window
     return current >= start && current <= end;
@@ -113,7 +122,21 @@ function checkAvailability(eAvailabilityStatus, currentTime) {
 // Helper function to convert "8 AM - 5 PM" format to a comparable time number (e.g., 08:00 = 800)
 function parseTime(timeStr) {
     let [hours, minutes] = timeStr.split(":").map(Number);
-    return hours * 100 + minutes; // Convert to a format like 800, 1700 for comparison
+    
+    // If the time string is in 12-hour format (e.g., '8 AM - 5 PM'), handle it here
+    if (isNaN(hours)) {
+        const timeParts = timeStr.split(' ');
+        hours = Number(timeParts[0]);
+        minutes = 0;
+        
+        if (timeParts[1] === 'PM' && hours !== 12) {
+            hours += 12;
+        } else if (timeParts[1] === 'AM' && hours === 12) {
+            hours = 0;
+        }
+    }
+
+    return hours * 100 + minutes; // Convert to a format like 800 or 1700 for comparison
 }
 
 // Function to update local time based on UTC and offset
