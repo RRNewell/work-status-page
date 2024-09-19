@@ -48,8 +48,8 @@
 		}
         .wfh { background-color: #75d478; }       /* Green for WFH */
         .in-office { background-color: #80c7ff; } /* Blue for In Office */
-        .abroad { background-color: #ffc775; }    /* Orange for Working Abroad */
-        .annual-leave { background-color: #ff8f62; }   /* Red for Holiday Leave */
+        .abroad { background-color: #ffc775; }    /* Yellow Orange for Working Abroad */
+        .annual-leave { background-color: #ff8f62; }   /* Orange Red for Holiday Leave */
         .off { background-color: #c7c7c7; }       /* Grey for Day Off */
         .emergency { background-color: #ff8585; } /* Yellow for Emergency Off */
 		
@@ -102,32 +102,61 @@
 <main>
     <div>
         <div class="week-days">
-            <div class="day wfh" title="Working from Home">
-				<i class="fas fa-chevron-down arrow" style="color: #D3D3D3"></i>
+            <!-- <div class="day wfh" title="Working from Home"> -->
+				<!-- <i class="fas fa-chevron-down arrow" style="color: #D3D3D3"></i> -->
+                <!-- <i class="fas fa-home"></i> -->
+                <!-- <span>Mon</span> -->
+            <!-- </div> -->
+            <!-- <div class="day in-office" title="In Office"> -->
+                <!-- <i class="fas fa-building"></i> -->
+                <!-- <span>Tue</span> -->
+            <!-- </div> -->
+            <!-- <div class="day in-office" title="In Office"> -->
+                <!-- <i class="fas fa-building"></i> -->
+                <!-- <span>Wed</span> -->
+            <!-- </div> -->
+            <!-- <div class="day abroad" title="Working Abroad"> -->
+                <!-- <i class="fas fa-plane"></i> -->
+                <!-- <span>Thu</span> -->
+            <!-- </div> -->
+            <!-- <div class="day annual-leave" title="Annual Leave"> -->
+                <!-- <i class="fas fa-umbrella-beach"></i> -->
+                <!-- <span>Fri</span> -->
+            <!-- </div> -->
+            <!-- <div class="day emergency" title="Off but taking emergencies"> -->
+                <!-- <i class="fas fa-bed-pulse"></i> -->
+                <!-- <span>Sat</span> -->
+            <!-- </div> -->
+            <!-- <div class="day off" title="Day Off"> -->
+                <!-- <i class="fas fa-bed"></i> -->
+                <!-- <span>Sun</span> -->
+            <!-- </div> -->
+			 <div class="day wfh" title="working from home">
                 <i class="fas fa-home"></i>
                 <span>Mon</span>
             </div>
-            <div class="day in-office" title="In Office">
+            <div class="day in-office" title="in office">
                 <i class="fas fa-building"></i>
                 <span>Tue</span>
             </div>
-            <div class="day in-office" title="In Office">
+            <div class="day in-office" title="in office">
                 <i class="fas fa-building"></i>
                 <span>Wed</span>
             </div>
-            <div class="day abroad" title="Working Abroad">
-                <i class="fas fa-plane"></i>
+			<div class="day wfh" title="working from home">
+				<i class="fas fa-chevron-down arrow" style="color: #d3d3d3"></i>
+                <i class="fas fa-home"></i>
                 <span>Thu</span>
             </div>
-            <div class="day annual-leave" title="Annual Leave">
-                <i class="fas fa-umbrella-beach"></i>
+            <div class="day in-office" title="in office">
+                <i class="fas fa-building"></i>
                 <span>Fri</span>
             </div>
-            <div class="day emergency" title="Off but taking emergencies">
-                <i class="fas fa-bed-pulse"></i>
+            <div class="day off" title="day off">
+                <i class="fas fa-bed"></i>
                 <span>Sat</span>
             </div>
-            <div class="day off" title="Day Off">
+            <div class="day off" title="day off">
                 <i class="fas fa-bed"></i>
                 <span>Sun</span>
             </div>
@@ -153,7 +182,7 @@
 				<i class="fas fa-code icon"></i>
 				<div class="details">
 					<strong>Core Web Dev</strong><br>
-					<span>dummy description</span>
+					<span>You need to be authenticated to see this..</span>
 				</div>
 				<span class="priority" style="color: red; text-shadow: 0px 2px 4px black;">
 					Business Critical <i class="fas fa-exclamation-triangle"></i> 
@@ -163,7 +192,7 @@
 				<i class="fas fa-envelope icon"></i>
 				<div class="details">
 					<strong>Request Emails</strong><br>
-					<span>dummy description</span>
+					<span>You need to be authenticated to see this..</span>
 				</div>
 				<span class="priority" style="color: orange; text-shadow: 0px 2px 4px black;">
 					Medium Priority <i class="fas fa-exclamation-circle"></i> 
@@ -172,8 +201,8 @@
 			<div class="task">
 				<i class="fas fa-chart-line icon"></i>
 				<div class="details">
-					<strong>Reports</strong><br>
-					<span>dummy description</span>
+					<strong>Work-Status-Page</strong><br>
+					<span>You need to be authenticated to see this..</span>
 				</div>
 				<span class="priority" style="color: #00bfa5; text-shadow: 0px 2px 4px black;">
 					Low Priority <i class="fas fa-check-circle"></i> 
@@ -204,7 +233,7 @@
 <!-- Hidden Fields -->
 <input type="hidden" id="hdn_workLocation" value="work">
 <input type="hidden" id="hdn_availabilityStatus" value="8 AM - 5 PM">
-<input type="hidden" id="hdn_lastUpdated" value="2024-09-18T15:06:00Z">
+<input type="hidden" id="hdn_lastUpdated" value="2024-09-19T10:00:00Z">
 <input type="hidden" id="hdn_localTimezone" value="UK">
 <input type="hidden" id="hdn_availabilityTimezone" value="UK">
 <input type="hidden" id="hdn_currentLocation" value="UK">

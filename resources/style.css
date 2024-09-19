@@ -176,7 +176,7 @@ footer {
 
         .moon {
             position: relative;
-            top: 3px; /* Adjust the position of the moon icon */
+            top: 0px; /* Adjust the position of the moon icon */
         }
 
         .floating-z {
