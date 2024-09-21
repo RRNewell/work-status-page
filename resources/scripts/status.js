@@ -109,11 +109,20 @@ function getAdjustedTime(utcTimeZone, selectedAvailableTimeZone) {
 
 // Function to check if the current time is within eAvailabilityStatus hours
 function checkAvailability(eAvailabilityStatus, currentTime) {
+    // Check if today is Saturday or Sunday
+    const currentDate = new Date();
+    const currentDay = currentDate.getDay(); // getDay() returns 0 for Sunday and 6 for Saturday
+    
+    // If it's Saturday (6) or Sunday (0), return false immediately
+    if (currentDay === 6 || currentDay === 0) {
+        console.log("It's the weekend, availability is set to false.");
+        return false;
+    }
+
     const [start, end] = eAvailabilityStatus.split(' - ').map(parseTime);
     const current = parseTime(currentTime);
-	
-	console.log(`Checking availability: Start: ${start}, End: ${end}, Current: ${current}`);
-
+    
+    console.log(`Checking availability: Start: ${start}, End: ${end}, Current: ${current}`);
 
     // Check if the current time is within the eAvailabilityStatus window
     return current >= start && current <= end;
