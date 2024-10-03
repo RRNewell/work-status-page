@@ -23,7 +23,7 @@ main {
 }
 
 header {
-    background-color: #de4040; 
+    background-color: #de4040;  /*#de4040;*/ /*#bf2334;*/ 
     padding: 20px;
     text-align: center;
     position: relative;
