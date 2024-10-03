@@ -23,7 +23,7 @@ main {
 }
 
 header {
-    background-color: #de4040; 
+    background-color: #F28C00; /* Orange header */
     padding: 20px;
     text-align: center;
     position: relative;
@@ -101,7 +101,7 @@ p {
 }
 
 footer {
-    background-color: #45717d;
+    background-color: #457B7D; /* Green footer */
     color: #FFFFFF; /* White text for contrast */
     text-align: center;
     padding: 10px;
