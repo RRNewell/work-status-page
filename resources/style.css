@@ -102,12 +102,13 @@ p {
 
 footer {
     background-color: #45717d;
-    color: #FFFFFF; /* White text for contrast */
+    color: #FFFFFF;
     text-align: center;
-    padding: 10px;
+    padding: 0px;
     position: relative;
     width: 100%;
     bottom: 0;
+    height: 95px;
 }
 
 
