@@ -2,7 +2,7 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    font-family: Tahoma, sans-serif;
+    font-family: 'Orbitron', sans-serif;
     background-image: -webkit-linear-gradient(left, #595959 0%, #ff9472 100%);
     background-image: linear-gradient(to right, #656565 0%, #353535 100%);
     width: 100%;
@@ -12,13 +12,13 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensures the body covers the entire viewport height */
+    min-height: 100vh; 
     position: relative;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-x: hidden; 
 }
 
 main {
-    flex: 1; /* This makes the main content expand to fill the remaining space */
+    flex: 1; 
     padding: 20px;
 }
 
@@ -37,13 +37,14 @@ header h1 {
 }
 
 .profile-pic {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     border: 3px solid #FFFFFF;
     position: absolute;
-    top: 20px;
+    top: 35px;
     left: 20px;
+	z-index:100;
 }
 
 .email-icon {

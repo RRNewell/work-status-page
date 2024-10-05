@@ -5,11 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ryan's Work Status</title>
     
-    <!-- Link to Font Awesome Free Version -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Lato:wght@400;700&family=Montserrat:wght@400;700&display=swap">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="resources/style.css">
 	
 	  <style>
+	  /* Navigation Bar Styles */
+		nav {
+		  position: relative;
+		  z-index: 10;
+		}
+
+		.navbar {
+		  list-style: none;
+		  margin: 0;
+		  padding: 0;
+		  display: flex;
+		  justify-content: center;
+		}
+
+		.navbar li {
+		  margin: 0 15px;
+		}
+
+		.navbar a {
+		  color: white;
+		  text-decoration: none;
+		  font-size: 18px;
+		  padding: 14px 20px;
+		  display: block;
+		  border-radius: 5px;
+		  transition: background-color 0.3s ease;
+		}
+		.navbar a:hover {
+		  background-color: #ad3636;
+		}
+		
 		/* Updated CSS for day squares */
 		.week-days {
 			display: flex;
@@ -88,17 +119,24 @@
     </style>
 </head>
 <body>
-<header>
+<header style="padding:5px!important">
     <img src="resources/images/birdy.png" alt="Profile Picture" class="profile-pic">
     <h1>Ryan Newell</h1>
     <a href="mailto:ryan.r.newell1@gmail.com" class="email-icon">
         <i class="fas fa-envelope"></i>
     </a>
+	
+	<nav>
+	  <ul class="navbar">
+		<li><a href="home.html">Home</a></li>
+		<li><a href="projects.html">Projects</a></li>
+		<li><a href="tasks.html">Tasks</a></li>
+		<li><a href="availability.html">Availability</a></li>
+		<li><a href="contact.html">Contact</a></li>
+	  </ul>
+	</nav>
+	
 </header>
-
-
-
-
 <main>
     <div>
         <div class="week-days">
@@ -148,11 +186,11 @@
                 <span>Thu</span>
             </div>
             <div class="day wfh" title="Working from Home">
-				<i class="fas fa-chevron-down arrow" style="color: #d3d3d3"></i>      
 				<i class="fas fa-home"></i>
                 <span>Fri</span>
             </div>
             <div class="day off" title="day off">
+				<i class="fas fa-chevron-down arrow" style="color: #d3d3d3"></i>      
                 <i class="fas fa-bed"></i>
                 <span>Sat</span>
             </div>
@@ -253,7 +291,7 @@
 <!-- Hidden Fields -->
 <input type="hidden" id="hdn_workLocation" value="home">
 <input type="hidden" id="hdn_availabilityStatus" value="8 AM - 5 PM">
-<input type="hidden" id="hdn_lastUpdated" value="2024-10-04T12:00:00Z">
+<input type="hidden" id="hdn_lastUpdated" value="2024-10-05T13:09:00Z">
 <input type="hidden" id="hdn_localTimezone" value="UK">
 <input type="hidden" id="hdn_availabilityTimezone" value="UK">
 <input type="hidden" id="hdn_currentLocation" value="UK">
