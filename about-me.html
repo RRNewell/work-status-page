@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryan's Work Status</title>
+    
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Lato:wght@400;700&family=Montserrat:wght@400;700&display=swap">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="resources/style.css">
+	
+	  <style>
+	  
+	.hexagon-container {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 40px; /* Adjust gap between hexagons */
+		margin-top: 40px;
+	}
+
+	.hex-item {
+		text-align: center; /* Center the text below hexagons */
+		width: 150px; /* Ensures hexagons and text are centered */
+	}
+
+	.hexagon {
+		position: relative;
+		width: 110px;
+		height: 120px;
+		background-color: #555555;    /*#f0f0f0;*/
+		margin-bottom: 20px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+		clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+	}
+
+	.hexagon img {
+		max-width: 80%;
+		max-height: 80%;
+		object-fit: contain; /* Ensures the image fits inside the hexagon */
+	}
+
+	.hex-item p {
+		font-size: 14px;
+		color: #333;
+		margin-top: 10px;
+	}
+
+	@media (max-width: 768px) {
+		.hexagon-container {
+			flex-direction: column;
+			align-items: center;
+		}
+	}
+	  
+	  /* Navigation Bar Styles */
+		nav {
+		  position: relative;
+		  z-index: 10;
+		}
+
+		.navbar {
+		  list-style: none;
+		  margin: 0;
+		  padding: 0;
+		  display: flex;
+		  justify-content: center;
+		}
+
+		.navbar li {
+		  margin: 0 15px;
+		}
+
+		.navbar a {
+		  color: white;
+		  text-decoration: none;
+		  font-size: 18px;
+		  padding: 14px 20px;
+		  display: block;
+		  border-radius: 5px;
+		  transition: background-color 0.3s ease;
+		}
+		.navbar a:hover {
+		  background-color: #ad3636;
+		}
+		
+		/* Updated CSS for day squares */
+		.week-days {
+			display: flex;
+			justify-content: space-between;
+			margin: 10px 0;
+			padding: 0px 18%;
+		}
+		.day {
+			width: 70px;
+			height: 70px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			font-size: 10px;
+			font-weight: bold;
+			color: #5e5e5e;
+			position: relative;
+			border-radius: 10px;
+			transition: transform 0.2s ease, box-shadow 0.2s ease;
+		}
+		.day:hover {
+			transform: scale(1.05); /* Slight zoom on hover */
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow */
+		}
+		.day i {
+			font-size: 22px;
+			margin-bottom: 5px;
+		}
+		.arrow {
+			position: absolute;
+			top: -20px;
+			left: 50%;
+			transform: translateX(-50%);
+			font-size: 19px!important;
+		}
+        .wfh { background-color: #75d478; }       /* Green for WFH */
+        .in-office { background-color: #80c7ff; } /* Blue for In Office */
+        .abroad { background-color: #ffc775; }    /* Yellow Orange for Working Abroad */
+        .annual-leave { background-color: #ff8f62; }   /* Orange Red for Holiday Leave */
+        .off { background-color: #c7c7c7; }       /* Grey for Day Off */
+        .emergency { background-color: #ff8585; } /* Yellow for Emergency Off */
+		
+		.task-grid {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 10px;
+			max-height: 120px;
+			overflow-y: scroll;
+			border: 2px solid #ccc;
+			padding: 10px;
+			border-radius: 8px;
+			background-color: #4d4d4d;
+		}
+        .task {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #746e6e;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .task .icon {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        .task .details {
+            flex-grow: 1;
+        }
+        .priority {
+            font-size: 12px;
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<header style="padding:5px!important">
+    <img src="resources/images/birdy.png" alt="Profile Picture" class="profile-pic">
+    <h1>Ryan Newell</h1>
+    <a href="mailto:ryan.r.newell1@gmail.com" class="email-icon">
+        <i class="fas fa-envelope"></i>
+    </a>
+	
+	<nav>
+	  <ul class="navbar">
+		<li><a href="home.html">Home</a></li>
+		<li><a href="About Me.html">About Me</a></li>
+		<li><a href="projects.html">Projects</a></li>
+		<li><a href="blog.html">Blog</a></li>
+		<li><a href="tasks.html">Tasks</a></li>
+		<li><a href="availability.html">Availability</a></li>
+		<li><a href="contact.html">Contact</a></li>
+	  </ul>
+	</nav>
+	
+</header>
+<main>
+    <section class="about-section">
+        <h2>Who I Am</h2>
+        <p>
+            Hello! I’m Ryan Newell, a passionate software developer with a strong background in IT and programming. I specialize in web development, IT infrastructure management, and creating intuitive solutions to solve complex technical problems. 
+        </p>
+
+        <h2>My Journey</h2>
+        <p>
+            With years of experience in IT and programming, I’ve developed a wide range of skills in languages like C#, Python, and C++. I’ve worked on various projects, from website development to complex systems integrations, always aiming to deliver efficient and scalable solutions.
+        </p>
+
+        <h2>Coding Skills</h2>
+        <div class="hexagon-container">
+            <div class="hex-item">
+                <div class="hexagon">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/ISO_C%2B%2B_Logo.svg" alt="C++">
+                </div>
+                <p>1 year Commercial Experience in C++.</p>
+            </div>
+            <div class="hex-item">
+                <div class="hexagon">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Csharp_Logo.png" style="max-width:143%!important; max-height:183%!important" alt="C#">
+                </div>
+                <p>4 years Commercial Experience in C#.</p>
+            </div>
+            <div class="hex-item">
+                <div class="hexagon">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Sql_data_base_with_logo.png" alt="SQL">
+                </div>
+                <p>3 years Commercial Experience in SQL.</p>
+            </div>
+            <div class="hex-item">
+                <div class="hexagon">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/3/30/Java_programming_language_logo.svg" style="max-width:70%!important; max-height:70%!important" alt="Java">
+                </div>
+                <p>2 years Commercial Experience in Java.</p>
+            </div>
+            <div class="hex-item">
+                <div class="hexagon">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" style="top: 5px; position: relative; left: 5px;" alt="Python">
+                </div>
+                <p>1 year Commercial Experience in Python.</p>
+            </div>
+        </div>
+		<div class="hexagon-container">
+		    <div class="hex-item">
+                <div class="hexagon">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Rust_programming_language_black_logo.svg" alt="Rust">
+                </div>
+                <p>1 year Non-Commercial Experience in Rust.</p>
+            </div>
+			   <div class="hex-item">
+                <div class="hexagon">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROZa92V2lYvGe7NRsCjeaBc0z8oMNVO4c2_Q&s" style="max-width: 110%!important;max-height: 110% !important;}" alt="Unreal Engine">
+                </div>
+                <p>1 year Non-Commercial Experience in Unreal Engine.</p>
+            </div>
+            <div class="hex-item">
+                <div class="hexagon">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Unity_Technologies_logo.svg" alt="Unity">
+                </div>
+                <p>1 year Non-Commercial Experience in Unity.</p>
+            </div>
+            <div class="hex-item">
+                <div class="hexagon">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/Godot_icon.svg" alt="Godot">
+                </div>
+                <p>1 year Non-Commercial Experience in Godot.</p>
+            </div>
+            <div class="hex-item">
+                <div class="hexagon">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" alt="AWS">
+                </div>
+                <p>1 year Non-Commercial Experience in AWS.</p>
+            </div>
+		</div>
+		
+		
+		<h2>Work Experience</h2>
+		<div class="work-experience">
+		  <h3>Software Engineer – Revolent Group (May 2022 - June 2024)</h3>
+		  <p>Worked on 3 APIs related to authentication systems using TDD in a Java Spring Boot environment. Extensive unit testing with Mockito and JUnit, and completion of user stories.</p>
+
+		  <h3>IT Specialist – R. Roscoe & Sons Limited (Oct 2021 - 2022)</h3>
+		  <p>General IT work, setting up websites, and business maintenance.</p>
+
+		  <h3>Junior Systems Programmer – Bolton Sixth Form College (Nov 2018 - Oct 2021)</h3>
+		  <p>Developed the in-house learning environment, DAVE, using C# ASP.NET, SQL Server Studio, and JavaScript for responsiveness.</p>
+		</div>
+		
+		<h2>Education</h2>
+		<ul class="education">
+		  <li><strong>University of Central Lancashire:</strong> BSc in Computer Programming and Games Development, 2:1 (2015 – 2018)</li>
+		  <li><strong>Runshaw Adult College:</strong> UCLAN foundation degree in Computer Science (2012 – 2015)</li>
+		  <li><strong>King George the 5th (KGV):</strong> A Levels in Geology, Ancient History, and Latin (2009 – 2012)</li>
+		</ul>
+		
+        <h2>Hobbies and Interests</h2>
+        <p>
+            Beyond my technical pursuits, I’m a huge fan of gaming (especially Warhammer 40k: Space Marine), and I’m constantly learning new skills to enhance my programming toolkit. I’m also passionate about creating innovative solutions in my personal projects, like TielsOS.
+        </p>
+
+
+        <div class="contact-info">
+            <h2>Contact</h2>
+            <p>Feel free to reach out via email: <a href="mailto:ryan.r.newell1@gmail.com">ryan.r.newell1@gmail.com</a></p>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2024 Ryan Newell. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

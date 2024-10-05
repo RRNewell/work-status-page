@@ -34,7 +34,7 @@ async function updateStatus() {
 
         // If outside of eAvailabilityStatus, set to Offline
         if (!isWithinAvailability) {
-			document.getElementById('location').innerHTML = `<div style="display:inline; color:#a51d1d"> Offline <i class="fas fa-moon moon"></i>
+			document.getElementById('location').innerHTML = `<div class="samurai-red" style="display:inline;"> Offline <i class="fas fa-moon moon"></i>
                 <span class="floating-z">Z</span>
                 <span class="floating-z" style="right: -11px;">Z</span>
                 <span class="floating-z" style="right: -12px;">Z</span></div>`;

@@ -87,7 +87,7 @@ section {
 }
 
 h2 {
-    color: #5fb4b7; /* Blue color for section headings */
+    color: #609cad; /* Blue color for section headings */
 	line-height: 14px
 }
 
@@ -98,11 +98,11 @@ p {
 
 .status {
     font-weight: bold;
-    color: #F28C00; /* Highlighting status text */
+    color: #dea740; /* Highlighting status text */
 }
 
 footer {
-    background-color: #45717d;
+    background-color: #538491;
     color: #FFFFFF;
     text-align: center;
     padding: 0px;
@@ -202,4 +202,15 @@ footer {
                 opacity: 0;
             }
         }
+
+
+	.samurai-red-font {
+		color: #c83a3a!important;
+	}
+	.bg-samurai-red {
+		background-color: #c83a3a!important;
+	}
+	.red-orange-font {
+		color: #d43636!important;
+	}
 
